@@ -1,5 +1,13 @@
-# from d5 import stage1, stage2
-import d5
+from d5 import stage1, stage2
+import time
+# import d5
 
 if __name__ == '__main__':
-    d5.stage1.run()
+    st = time.time()
+    st_p = time.process_time()
+
+    stage2.run()
+    
+    et = time.time()
+    et_p = time.process_time()
+    print(f'Execution time: {et - st} seconds\nCPU Time: {et_p - st_p}')
