@@ -19,11 +19,11 @@ def get_maps(lines: list):
     return maps
 
 
-def use_map(map: list, seed: int) -> int:
+def use_map(mapp: list, seed: int) -> int:
     res = seed
-    for map_line in map:
-        dest_range, source_range, range = [int(i) for i in map_line.split()]
-        if seed < source_range or seed > source_range + range:
+    for map_line in mapp:
+        dest_range, source_range, r = [int(i) for i in map_line.split()]
+        if seed < source_range or seed > source_range + r:
             continue
         res = dest_range + (seed - source_range)
         break
@@ -46,7 +46,7 @@ def run():
     for seed in seeds:
         seed_res = seed
         print(f"\nSeed: {seed}")
-        for map in maps:
-            seed_res = use_map(map, seed_res)
+        for mapp in maps:
+            seed_res = use_map(mapp, seed_res)
         locations.append(seed_res)
     print(f"\n====\nResult: {min(locations)}")
