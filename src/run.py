@@ -6,7 +6,7 @@ if __name__ == '__main__':
     st = time.time()
     st_p = time.process_time()
 
-    stage1.run()
+    stage2.run()
     
     et = time.time()
     et_p = time.process_time()

@@ -16,7 +16,7 @@
             "name": "AoC",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}\\src\\run.py",
+            "program": "${workspaceFolder}//src//run.py",
             "console": "integratedTerminal",
             "justMyCode": true
         }

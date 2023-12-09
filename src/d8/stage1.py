@@ -2,86 +2,61 @@ import utils
 from collections import Counter
 
 
-def handle_line(row: str) -> tuple:
-    cards = {
-        '2': 2,
-        '3': 3,
-        '4': 4,
-        '5': 5,
-        '6': 6,
-        '7': 7,
-        '8': 8,
-        '9': 9,
-        'T': 10,
-        'J': 11,
-        'Q': 12,
-        'K': 13,
-        'A': 14
-    }
-    hand = [cards[i] for i in row.split()[0]]
-    bid = int(row.split()[1])
-    return (hand, bid)
+def get_instructions(row: str) -> list:
+    res = []
+    return [i for i in row]
 
 
-def calc_power(hand: list, add_pow: int) -> int:
-    power = 0
-    for i, card in enumerate(hand[::-1]):
-        power += card * pow(15, i)
-    return pow(15, add_pow) + power
+def get_nodes(input: list) -> dict:
+    res = {}
+    for row in input:
+        node = row.split(" = ")[0]
+        left = row.split(" = ")[1][1:4]
+        right = row.split(" = ")[1][6:9]
+        res[node] = (left, right)
+    return res
 
 
-def calc_hand(hand: list) -> int:
-    """ Returns power of hand """    
-    HAND_QTY = 5
-    cards_qty = Counter(hand)
-    cards_mc = cards_qty.most_common()
-    if cards_mc[0][1] == 5:
-        # five of a kind
-        return calc_power(hand, HAND_QTY + 6)   
-    if cards_mc[0][1] == 4:
-        # four of a kind
-        return calc_power(hand, HAND_QTY + 5)   
-    if cards_mc[0][1] == 3: 
-        if cards_mc[1][1] == 2:
-        # full house
-            return calc_power(hand, HAND_QTY + 4)   
-        else:
-        # three of a kind
-            return calc_power(hand, HAND_QTY + 3)
-    if cards_mc[0][1] == 2: 
-        if cards_mc[1][1] == 2:
-            # two pairs
-            return calc_power(hand, HAND_QTY + 2)
-        else:
-            # one pair
-            return calc_power(hand, HAND_QTY + 1)
-    # high card
-    return calc_power(hand, HAND_QTY)        
+def use_instruction(input_node: str, instruction: str, nodes: dict) -> str:
+    if instruction == 'L':
+        return nodes[input_node][0]
+    return nodes[input_node][1]
 
+
+def use_instruction_multi(input_nodes: list, instruction: str, nodes: dict) -> list:
+    res = []
+    if instruction == 'L':
+        for i in input_nodes:
+            res.append(nodes[i][0])
+        return res
+    
+    for i in input_nodes:
+        res.append(nodes[i][1])
+    return res
+
+    
+def use_instructions(instr: list, nodes: dict, last_node: str = 'AAA', last_steps: int = 0) -> tuple:
+    res_node = last_node
+    for i in instr:
+        last_steps += 1
+        if res_node[2] == 'Z':
+            return last_steps
+    print(f"Didn't find exit, last_node: {res_node}, last_steps:{last_steps}")
+    return use_instructions(instr, nodes, res_node, last_steps)
+      
 
 def test():
     t = "32748 765"
-    aa = handle_line(0, t)[0][0]
-    a = calc_hand([1,2,2,2,2])
-    print(a)
+    print(t)
 
 
 def run():
     FCHECK = 'input_check'
-    FPROD = 'd7/input'
+    FPROD = 'd8/input'
     inp = utils.read_file_lines(FPROD)
     res = 0
-    hands = {
-        #hand_num: [(hand, bid), power]
-    }
-
-    for i, line in enumerate(inp):
-        hand = handle_line(line)
-        print(f"Hand: {hand}")
-        hands[i] = [hand, calc_hand(hand[0])]
-    print(f"Hands: {hands}")
-    sorted_hands_no_by_power = [k for k, v in sorted(hands.items(), key=lambda item: item[1][1])]
-    for i, hand_no in enumerate(sorted_hands_no_by_power):
-        res += hands[hand_no][0][1] * (i + 1)
-
+    nodes = []
+    instr = get_instructions(inp[0])
+    nodes = get_nodes(inp[2:])
+    res = use_instructions(instr, nodes)
     print(f"\n====\nResult: {res}")
