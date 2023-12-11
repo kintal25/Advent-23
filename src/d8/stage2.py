@@ -41,7 +41,20 @@ def use_instructions_multi(instr: list, nodes: dict, last_nodes: list, last_step
     # print(f"Didn't find exit, last_node: {res_nodes}, last_steps:{last_steps}")
     return use_instructions_multi(instr, nodes, res_nodes, last_steps)
     
+    
+def use_instructions_multi2(instr: list, nodes: dict, last_nodes: list, last_steps: int = 0) -> tuple:
+    res_nodes = last_nodes
+    for i in instr:
+        res_nodes = use_instruction_multi(res_nodes, i, nodes)
+        last_steps += 1
+        # All result nodes in task input only at right side
+        if i =='L': continue
+        if all(r[2] == 'Z' for r in res_nodes):
+            return last_steps
+    # print(f"Didn't find exit, last_node: {res_nodes}, last_steps:{last_steps}")
+    return use_instructions_multi(instr, nodes, res_nodes, last_steps)
 
+    
 def test():
     t = "32748 765"
     print(t)
@@ -60,6 +73,6 @@ def run():
     for k, v in nodes.items():
         if k[2] == 'A':
             start_nodes.append(k)
-    res = use_instructions_multi(instr, nodes, start_nodes)
+    res = use_instructions_multi2(instr, nodes, start_nodes)
     print(f"\n====\nResult: {res}")
 
